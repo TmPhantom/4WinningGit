@@ -1,3 +1,3 @@
 //An enum-class
 
-enum class State { FREE, YOURS, PC };
+enum class State { FREE, PLAYER, PC };

@@ -15,6 +15,7 @@ protected:
 	bool playerHasDoubleRow(PlayingField *pPlayingField, int *pLine);
 	bool playerHasTrippleRow(PlayingField *pPlayingField, int *pLine);
 	bool proofCoin(std::list< std::pair<int, int>> &coins, int x, int y);
+	bool randomAttack(PlayingField *pPlayingFiel);
 
 private:
 };

@@ -27,7 +27,7 @@ void PlayingField::showPlayingField() {
 				case (State::FREE) :
 					std::cout << " .";
 					break;
-				case (State::YOURS) :
+				case (State::PLAYER) :
 					std::cout << " X";
 					break;
 				case (State::PC) :
@@ -67,33 +67,10 @@ void PlayingField::addPairToList(int x, int y, bool pc) {
 	coinsEntry.second = y;
 
 	if (pc) {
-		it = coins.find(pcKey);
-		//
-		if (it != coins.end()) {
-			std::list<std::pair<int, int>> list = it->second;
-			list.push_front(coinsEntry);
-			it->second = list;
-		}
-		//if the list is empty
-		else {
-			std::list<std::pair<int, int>> list;
-			list.push_front(coinsEntry);
-			coins.insert(std::pair<int, std::list<std::pair<int, int>>>(pcKey, list));
-		}
+		pcCoins.push_front(coinsEntry);
 	}
 	if (!pc) {
-		it = coins.find(playersKey);
-		if (it != coins.end()) {
-			std::list<std::pair<int, int>> list = it->second;
-			list.push_front(coinsEntry);
-			it->second = list;
-		}
-		//if the list is empty
-		else {
-			std::list<std::pair<int, int>> list;
-			list.push_front(coinsEntry);
-			coins.insert(std::pair<int, std::list<std::pair<int, int>>>(playersKey, list));
-		}
+		playersCoins.push_front(coinsEntry);
 	}
 }
 
@@ -136,23 +113,68 @@ std::map<int, std::list<std::pair<int, int>>> PlayingField::getCoins() {
 }
 
 std::list<std::pair<int, int>> PlayingField::getPlayersCoins() {
-	it = coins.find(playersKey);
-	return it->second;
+	return playersCoins;
 }
 
 std::list<std::pair<int, int>> PlayingField::getPCCoins() {
-	it = coins.find(pcKey);
-	return it->second;
+	return pcCoins;
 }
 
 std::list< std::pair<int, int>> PlayingField::getCoinsList() {
-	std::list<std::pair<int, int>> returnList = getPlayersCoins();
-	std::list<std::pair<int, int>> pcCoins = getPCCoins();
-	std::list<std::pair<int, int>>::iterator i;
+	std::list<std::pair<int, int>> returnList = this->getPlayersCoins();
+	std::list<std::pair<int, int>> pcCoins = this->getPCCoins();
+	std::list<std::pair<int, int>>::iterator i = pcCoins.begin();
 	
 	//put both lists together
-	for (i = pcCoins.begin(); i != pcCoins.end(); i++) {
+	for (i; i != pcCoins.end(); i++) {
 		returnList.push_back(*i);
 	}
 	return returnList;
+}
+
+bool PlayingField::setCoinInTable(int xValue, bool pc) {
+
+	//if line is empty
+	if (this->getFieldState(xValue, yMax) == State::FREE) {
+		if (pc) {
+			this->setFieldState(xValue, yMax, State::PC);
+			this->addPairToList(xValue, yMax, true);
+		}
+		if (!pc) {
+			this->setFieldState(xValue, yMax, State::PLAYER);
+			this->addPairToList(xValue, yMax, false);
+		}
+		return true;
+	}
+
+	//if lowest place of the line is not empty
+	if (this->getFieldState(xValue, yMax) != State::FREE) {
+		
+		for (int y = 0; y <= yMax; y++) {
+
+			if (this->getFieldState(xValue, y) != State::FREE) {
+
+				if (pc) {
+					this->setFieldState(xValue, y - 1, State::PC);
+					this->addPairToList(xValue, y - 1, true);
+
+					if (y - 1 == 0) {
+						this->addLineToList(xValue);
+					}
+					return true;
+				}
+
+				if (!pc) {
+					this->setFieldState(xValue, y - 1, State::PLAYER);
+					this->addPairToList(xValue, y - 1, false);
+
+					if (y - 1 == 0) {
+						this->addLineToList(xValue);
+					}
+					return true;
+				}
+			}
+		}
+	}
+
 }

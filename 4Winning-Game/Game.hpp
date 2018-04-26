@@ -14,5 +14,4 @@ class Game {
 		void run();
 
 		bool playersTurn();
-		bool setCoinInTable(int xEnter, bool pc);
 };

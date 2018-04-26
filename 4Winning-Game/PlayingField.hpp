@@ -11,13 +11,13 @@ class PlayingField {
 		static const int length = 7;
 		int xMax = length - 1;
 		int yMax = height - 1;
-		int pcKey = 0;
-		int playersKey = 1;
 
 		Field playingField[length][height];
 		std::list<int> linesList;
 		std::map<int, std::list<std::pair<int, int>>> coins;
-		std::map<int, std::list<std::pair<int, int>>>::iterator it;
+		std::list<std::pair<int, int>> pcCoins;
+		std::list<std::pair<int, int>> playersCoins;
+		std::list<std::pair<int, int>>::iterator it;
 
 	public:
 		PlayingField();
@@ -27,6 +27,7 @@ class PlayingField {
 		void showPlayingField();
 		bool proofLine(int xLine);
 		bool proofEnter(int xEnter);
+		bool setCoinInTable(int xValue, bool pc);
 
 		void addLineToList(int xEnter);
 		void addPairToList(int x, int y, bool pc);
